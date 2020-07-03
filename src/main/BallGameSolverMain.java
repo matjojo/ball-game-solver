@@ -16,11 +16,12 @@ public class BallGameSolverMain {
 	// TODO: implement a binary search for the smallest solution or cache the smallest solution and search on?
 	private static int amountMoves = 0;
 
-	private static int amountTries = 0;
+	private static long amountTries = 0;
 
 	public static void main(String[] args) throws IOException {
 		ArrayList<BallBucket> accumulatedBuckets = new ArrayList<>();
 
+		System.out.println("MAX_MOVES: " + MAX_MOVES);
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		System.out.println("Enter numbers with spaces in between (left is bottom): ");
 		String s;
