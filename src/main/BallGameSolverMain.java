@@ -12,9 +12,11 @@ public class BallGameSolverMain {
 	 * The stack is built up from the end of the solution down. So the last move is the deepest element.
 	 */
 	private static final Stack<Move> solution = new Stack<>();
-	private static final int MAX_MOVES = 100;
+	private static final int MAX_MOVES = 42;
 	// TODO: implement a binary search for the smallest solution or cache the smallest solution and search on?
 	private static int amountMoves = 0;
+
+	private static int amountTries = 0;
 
 	public static void main(String[] args) throws IOException {
 		ArrayList<BallBucket> accumulatedBuckets = new ArrayList<>();
@@ -46,6 +48,7 @@ public class BallGameSolverMain {
 
 		// TODO: make a printable for Move to make the moves actually matter.
 		System.out.println("The solution takes " + amountMoves + " steps.");
+		System.out.println("We attempted " + amountTries + " tries.");
 	}
 
 	static boolean solve(Board board, Move previous) {
@@ -55,6 +58,7 @@ public class BallGameSolverMain {
 			return false;
 		}
 		for (Move attempt : board.getAllMoves(previous)) {
+			amountTries++;
 			board.doMove(attempt);
 			if (board.solved()) {
 				// we built up the solution from the last move up.
