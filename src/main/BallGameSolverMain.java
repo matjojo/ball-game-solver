@@ -12,11 +12,15 @@ public class BallGameSolverMain {
 	 * The stack is built up from the end of the solution down. So the last move is the deepest element.
 	 */
 	private static final Stack<Move> solution = new Stack<>();
-	private static int MAX_MOVES = 42;
+	private static int MAX_MOVES = 70;
 	// TODO: implement a binary search for the smallest solution or cache the smallest solution and search on?
 	private static int amountMoves = 0;
 
+	private static final int EVICTING_MOVE_LIST_LENGTH = 2;
+
 	private static long amountTries = 0;
+
+	// TODO: make this into threads that start with any one of the first possible moves already done.
 
 	public static void main(String[] args) throws IOException {
 		ArrayList<BallBucket> accumulatedBuckets = new ArrayList<>();
@@ -55,7 +59,11 @@ public class BallGameSolverMain {
 		Board toSolve = new Board(accumulatedBuckets.toArray(new BallBucket[0]));
 
 		// -1, -1  is an impossible move. To make sure that none of the first moves are the opposite of their 'previous' move.
-		if (!solve(toSolve, new Move(-1, -1))) {
+		EvictingMoveList previousMoves = new EvictingMoveList(EVICTING_MOVE_LIST_LENGTH);
+		for (int i = 0; i < EVICTING_MOVE_LIST_LENGTH; i++) {
+			previousMoves.add(new Move(-1-i, -1-i)); // these moves may not be consecutive
+		}
+		if (!solve(toSolve, previousMoves)) {
 			System.out.println("Did not find a solution!");
 			System.out.println("We attempted " + amountTries + " tries.");
 			return;
@@ -67,15 +75,19 @@ public class BallGameSolverMain {
 		System.out.println("We attempted " + amountTries + " tries.");
 	}
 
-	static boolean solve(Board board, Move previous) {
+	static boolean solve(Board board, EvictingMoveList previousList) {
 		amountMoves++;
 		if (amountMoves > MAX_MOVES) {
 			amountMoves--;
 			return false;
 		}
-		for (Move attempt : board.getAllMoves(previous)) {
+		EvictingMoveList currentPreviousList; // since we can't remove attempts from the top we make copies and edit those
+		for (Move attempt : board.getAllMoves(previousList)) {
 			amountTries++;
+			currentPreviousList = previousList.copy();
+
 			board.doMove(attempt);
+			currentPreviousList.add(attempt);
 			if (board.solved()) {
 				// we built up the solution from the last move up.
 				// So this will be the bottom most move and the highest in the console.
@@ -84,7 +96,7 @@ public class BallGameSolverMain {
 				return true;
 			}
 			// try deeper
-			if (solve(board, previous)) {
+			if (solve(board, currentPreviousList)) {
 				// we built the solution from the last move up.
 				// this will be one of the intermediate or first move.
 				// which will be on top of the stack and at the bottom of the console.
