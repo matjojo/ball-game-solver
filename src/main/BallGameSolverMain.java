@@ -21,7 +21,6 @@ public class BallGameSolverMain {
 	public static void main(String[] args) throws IOException {
 		ArrayList<BallBucket> accumulatedBuckets = new ArrayList<>();
 
-		System.out.println("MAX_MOVES: " + MAX_MOVES);
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		String res;
 		Integer resNum;
@@ -58,6 +57,7 @@ public class BallGameSolverMain {
 		// -1, -1  is an impossible move. To make sure that none of the first moves are the opposite of their 'previous' move.
 		if (!solve(toSolve, new Move(-1, -1))) {
 			System.out.println("Did not find a solution!");
+			System.out.println("We attempted " + amountTries + " tries.");
 			return;
 		}
 		System.out.println("Solution needs to be played bottom up!");
