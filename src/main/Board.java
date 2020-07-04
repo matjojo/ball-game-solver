@@ -17,11 +17,11 @@ public class Board {
 	 * @param twoFrom an int
 	 * @return true if this selection of moves is in essence just one.from -> two.to
 	 */
-	private static boolean moveIsConsecutiveTo(Move one, int twoFrom) {
+	private static boolean moveIsConsecutiveTo(@NotNull Move one, int twoFrom) {
 		return one.to == twoFrom;
 	}
 
-	private static boolean moveIsConsecutiveTo(Move one, Move two) {
+	private static boolean moveIsConsecutiveTo(@NotNull Move one, @NotNull Move two) {
 		return moveIsConsecutiveTo(one, two.from);
 	}
 
