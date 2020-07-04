@@ -16,7 +16,7 @@ public class BallGameSolverMain {
 	// TODO: implement a binary search for the smallest solution or cache the smallest solution and search on?
 	private static int amountMoves = 0;
 
-	private static final int EVICTING_MOVE_LIST_LENGTH = 2;
+	private static final int EVICTING_MOVE_LIST_LENGTH = 3;
 
 	private static long amountTries = 0;
 

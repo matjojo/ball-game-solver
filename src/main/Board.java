@@ -17,11 +17,11 @@ public class Board {
 	 * @param twoFrom an int
 	 * @return true if this selection of moves is in essence just one.from -> two.to
 	 */
-	private static boolean moveIsConsecutiveTo(Move one, int twoFrom) {
+	private static boolean moveIsConsecutiveTo(@NotNull Move one, int twoFrom) {
 		return one.to == twoFrom;
 	}
 
-	private static boolean moveIsConsecutiveTo(Move one, Move two) {
+	private static boolean moveIsConsecutiveTo(@NotNull Move one, @NotNull Move two) {
 		return moveIsConsecutiveTo(one, two.from);
 	}
 
@@ -46,6 +46,7 @@ public class Board {
 				if (buckets[j].full()) continue;
 				option = new Move(i, j);
 				if (!isApprovedThreeMoveList(previousList, option)) continue;
+				if (!isApprovedFourMoveList(previousList, option)) continue;
 				if (buckets[j].empty()) {
 					result.add(new Move(i, j));
 					continue;
@@ -89,16 +90,57 @@ public class Board {
 		return true;
 	}
 
+
 	/**
-	 * @param first nonnull move
-	 * @param second nonull move
+	 *
+	 * A list of 4 moves can be of some amount of types.
+	 * C = consecutive
+	 * N = not influencing
+	 * I = influencing
+	 *-2-1 0 current
+	 * C C C C // by doubles filter
+	 * C C C N // by doubles filter
+	 * C C N C // by doubles filter
+	 * C C N N // by doubles filter
+	 * C N C C // by doubles filter
+	 * C N C N // by triples filter
+	 * C N N C              // can be simplified to C1 * C2 N N
+	 * C N N N // can't be simplified
+	 * N C C C // by doubles filter
+	 * N C C N // by doubles filter
+	 * N C N C // by triples filter
+	 * N C N N // can't be simplified
+	 * N N C C // by doubles filter
+	 * N N C N // can't be simplified
+	 * N N N C // can't be simplified
+	 * N N N N // can't be simplified
+	 *
+	 * // any other combination with influencing cannot be simplified until we make directional influencer methods
+	 *
+	 * @return true if this list of moves may be attempted.
+	 */
+	private static boolean isApprovedFourMoveList(@NotNull EvictingMoveList list, @NotNull Move current) {
+		// case C N N C
+		if (moveIsConsecutiveTo(list.thirdMostRecent(), current) &&
+			!moveInfluences(list.secondMostRecent(), list.thirdMostRecent()) &&
+			!moveInfluences(list.secondMostRecent(), current) &&
+			!moveInfluences(list.mostRecent(), list.thirdMostRecent()) &&
+			!moveInfluences(list.mostRecent(), current)) return false;
+		return true;
+	}
+
+	/**
+	 * NOTE: this is an unordered check. No fancy stuff here.
+	 *
+	 * @param one nonnull move
+	 * @param two nonull move
 	 * @return true if the moves influence each other, so if the moves have any pieces in common
 	 */
-	private static boolean moveInfluences(@NotNull Move first, @NotNull Move second) {
-		return first.from == second.from ||
-				first.from == second.to  ||
-				first.to == second.from  ||
-				first.to == second.to;
+	private static boolean moveInfluences(@NotNull Move one, @NotNull Move two) {
+		return one.from == two.from ||
+				one.from == two.to  ||
+				one.to == two.from  ||
+				one.to == two.to;
 	}
 
 	/**
