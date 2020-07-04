@@ -12,7 +12,7 @@ public class BallGameSolverMain {
 	 * The stack is built up from the end of the solution down. So the last move is the deepest element.
 	 */
 	private static final Stack<Move> solution = new Stack<>();
-	private static final int MAX_MOVES = 42;
+	private static int MAX_MOVES = 42;
 	// TODO: implement a binary search for the smallest solution or cache the smallest solution and search on?
 	private static int amountMoves = 0;
 
@@ -23,6 +23,21 @@ public class BallGameSolverMain {
 
 		System.out.println("MAX_MOVES: " + MAX_MOVES);
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		String res;
+		Integer resNum;
+		System.out.print("What should the max number of moves tried be? ");
+		do {
+			res = br.readLine();
+			try {
+				resNum = Integer.parseInt(res);
+			} catch (NumberFormatException ignored) {
+				System.out.print("Couldn't parse number, try again: ");
+				resNum = null;
+			}
+		} while (resNum == null);
+		System.out.println("Set max num to " + resNum);
+		MAX_MOVES = resNum;
+
 		System.out.println("Enter numbers with spaces in between (left is bottom): ");
 		String s;
 		while (!"".equals(s = br.readLine())) {
