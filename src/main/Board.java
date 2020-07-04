@@ -71,6 +71,11 @@ public class Board {
 	 *  C C N   // won't happen due to consecutive filter
 	 * In this case we will approve only one of these setups. Cutting the amount of accepted steps by two thirds.
 	 *
+	 * The influencing cases work out like this:
+	 * I C C  // consecutive filter does this
+	 * C I C  // cannot be replaced by C1 * C2 I so is not filtered out.
+	 * C C I  // consecutive filter does this
+	 *
 	 *
 	 * @return true if the list of three moves is approved.
 	 */
