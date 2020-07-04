@@ -33,6 +33,13 @@ public class EvictingMoveList {
 		return getOffsetFromFront(1);
 	}
 
+	/**
+	 * @return the third most recent move, so offset -2.
+	 */
+	public Move thirdMostRecent() {
+		return getOffsetFromFront(2);
+	}
+
 	public void add(@NotNull Move move) {
 		// from the first to one from the last, so if len=3 we do 0 <= 1, 1<= 2, 2<= newMove
 		for (int i = 0; i < this.length - 1; i++) { // <size-2 is the same as <=size - 2;
