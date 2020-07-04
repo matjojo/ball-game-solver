@@ -85,6 +85,7 @@ public class BallGameSolverMain {
 		for (Move attempt : board.getAllMoves(previousList)) {
 			amountTries++;
 			currentPreviousList = previousList.copy();
+
 			board.doMove(attempt);
 			currentPreviousList.add(attempt);
 			if (board.solved()) {
