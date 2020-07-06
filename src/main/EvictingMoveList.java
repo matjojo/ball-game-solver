@@ -58,14 +58,16 @@ public class EvictingMoveList {
 		return backing[index];
 	}
 
-	public void printContent() {
+	@Override
+	public String toString() {
+		StringBuilder result = new StringBuilder(backing.length * 3);
 		for (Move move : backing) {
 			if (move == null) {
-				System.out.println("null");
+				result.append("null,");
 				continue;
 			}
-			System.out.println(move.from + " -> " + move.to);
+			result.append("[").append(move.from).append("]").append("->").append("[").append(move.to).append("]").append(",");
 		}
+		return result.toString();
 	}
-
 }
