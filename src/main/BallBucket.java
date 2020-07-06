@@ -15,6 +15,12 @@ public class BallBucket {
 		}
 	}
 
+	public BallBucket(Integer[] balls) {
+		this();
+		System.arraycopy(balls, 0, this.balls, 0, balls.length);
+
+	}
+
 	public boolean full() {
 		return !(balls[3] == null);
 	}
