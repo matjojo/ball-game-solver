@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.EmptyStackException;
 import java.util.Stack;
 
 public class BallGameSolverMain {
@@ -68,14 +69,22 @@ public class BallGameSolverMain {
 			System.out.println("We attempted " + amountTries + " tries.");
 			return;
 		}
-		System.out.println("Solution needs to be played bottom up!");
-
-		// TODO: make a printable for Move to make the moves actually matter.
 		System.out.println("The solution takes " + amountMoves + " steps.");
 		System.out.println("We attempted " + amountTries + " tries.");
+		System.out.println("Solution needs to be played top down!");
+		try {
+			Move current;
+			while ((current = solution.pop()) != null) {
+				System.out.println(current);
+			}
+		} catch (EmptyStackException ignored) {}
+
 	}
 
 	static boolean solve(Board board, EvictingMoveList previousList) {
+		if (board.solved()) { // make sure we actually call solved boards solved
+			return true;
+		}
 		amountMoves++;
 		if (amountMoves > MAX_MOVES) {
 			amountMoves--;
@@ -88,20 +97,12 @@ public class BallGameSolverMain {
 
 			board.doMove(attempt);
 			currentPreviousList.add(attempt);
-			if (board.solved()) {
-				// we built up the solution from the last move up.
-				// So this will be the bottom most move and the highest in the console.
-//				solution.push(attempt);
-				System.out.println("Last step: " + attempt.from + " -> " + attempt.to);
-				return true;
-			}
 			// try deeper
 			if (solve(board, currentPreviousList)) {
 				// we built the solution from the last move up.
 				// this will be one of the intermediate or first move.
 				// which will be on top of the stack and at the bottom of the console.
-				System.out.println("Step: " + attempt.from + " -> " + attempt.to);
-//				solution.push(attempt);
+				solution.push(attempt);
 				return true;
 			}
 			board.undoMove(attempt);
