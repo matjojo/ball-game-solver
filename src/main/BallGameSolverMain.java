@@ -12,14 +12,8 @@ public class BallGameSolverMain {
 	/**
 	 * The stack is built up from the end of the solution down. So the last move is the deepest element.
 	 */
-	private static final Stack<Move> solution = new Stack<>();
-	private static int MAX_MOVES = 70;
 	// TODO: implement a binary search for the smallest solution or cache the smallest solution and search on?
-	private static int amountMoves = 0;
-
 	private static final int EVICTING_MOVE_LIST_LENGTH = 3;
-
-	private static long amountTries = 0;
 
 	// TODO: make this into threads that start with any one of the first possible moves already done.
 
@@ -40,7 +34,7 @@ public class BallGameSolverMain {
 			}
 		} while (resNum == null);
 		System.out.println("Set max num to " + resNum);
-		MAX_MOVES = resNum;
+		int maxMoves = resNum;
 
 		System.out.println("Enter numbers with spaces in between (left is bottom): ");
 		String s;
@@ -64,51 +58,27 @@ public class BallGameSolverMain {
 		for (int i = 0; i < EVICTING_MOVE_LIST_LENGTH; i++) {
 			previousMoves.add(new Move(-1-i, -1-i)); // these moves may not be consecutive
 		}
-		if (!solve(toSolve, previousMoves)) {
+
+		GameSolver solver = new GameSolver();
+
+		if (!solver.solve(toSolve, previousMoves, maxMoves)) {
 			System.out.println("Did not find a solution!");
-			System.out.println("We attempted " + amountTries + " tries.");
+			System.out.println("We attempted " + solver.getAmountTries() + " tries.");
 			return;
 		}
-		System.out.println("The solution takes " + amountMoves + " steps.");
-		System.out.println("We attempted " + amountTries + " tries.");
-		System.out.println("Solution needs to be played top down!");
+		System.out.println("The solution takes " + solver.getAmountMoves() + " steps.");
+		System.out.println("We attempted " + solver.getAmountTries() + " tries.");
+		printSolution(solver.getSolution());
+	}
+
+	public static void printSolution(Stack<Move> solution) {
+		System.out.println("Remember, solutions are played top down.");
 		try {
 			Move current;
 			while ((current = solution.pop()) != null) {
 				System.out.println(current);
 			}
 		} catch (EmptyStackException ignored) {}
-
-	}
-
-	static boolean solve(Board board, EvictingMoveList previousList) {
-		if (board.solved()) { // make sure we actually call solved boards solved
-			return true;
-		}
-		amountMoves++;
-		if (amountMoves > MAX_MOVES) {
-			amountMoves--;
-			return false;
-		}
-		EvictingMoveList currentPreviousList; // since we can't remove attempts from the top we make copies and edit those
-		for (Move attempt : board.getAllMoves(previousList)) {
-			amountTries++;
-			currentPreviousList = previousList.copy();
-
-			board.doMove(attempt);
-			currentPreviousList.add(attempt);
-			// try deeper
-			if (solve(board, currentPreviousList)) {
-				// we built the solution from the last move up.
-				// this will be one of the intermediate or first move.
-				// which will be on top of the stack and at the bottom of the console.
-				solution.push(attempt);
-				return true;
-			}
-			board.undoMove(attempt);
-		}
-		amountMoves--;
-		return false;
 	}
 
 	/**
