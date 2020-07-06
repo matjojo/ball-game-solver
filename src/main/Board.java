@@ -82,9 +82,9 @@ public class Board {
 	 */
 	private static boolean isApprovedThreeMoveList(EvictingMoveList list, Move current) {
 		// case C N C
-		if (!moveInfluences(list.mostRecent(), list.secondMostRecent()) &&
-			!moveInfluences(list.mostRecent(), current) &&
-			moveIsConsecutiveTo(list.secondMostRecent(), current)) {
+		if (     moveIsConsecutiveTo(list.secondMostRecent(), current) &&
+				!middleInfluencesOuterConsecutives(list.secondMostRecent(), list.mostRecent(), current)) {
+//			System.out.println("Not approved list of three: " + list.secondMostRecent() + " " + list.mostRecent() + " " + current);
 			return false;
 		}
 		return true;
@@ -122,11 +122,19 @@ public class Board {
 	private static boolean isApprovedFourMoveList(@NotNull EvictingMoveList list, @NotNull Move current) {
 		// case C N N C
 		if (moveIsConsecutiveTo(list.thirdMostRecent(), current) &&
-			!moveInfluences(list.secondMostRecent(), list.thirdMostRecent()) &&
-			!moveInfluences(list.secondMostRecent(), current) &&
-			!moveInfluences(list.mostRecent(), list.thirdMostRecent()) &&
-			!moveInfluences(list.mostRecent(), current)) return false;
+			!middleInfluencesOuterConsecutives(list.thirdMostRecent(), list.secondMostRecent(), current) &&
+			!middleInfluencesOuterConsecutives(list.thirdMostRecent(), list.mostRecent(), current)) return false;
 		return true;
+	}
+
+	/**
+	 * if the middle move interacts with the intermediate location of the outer two consecutive locations or the resulting location of the consecutive move
+	 *
+	 * @return true if the middle move influences the outer consecutive moves so that they cannot be simplified into one move.
+	 */
+	private static boolean middleInfluencesOuterConsecutives(@NotNull Move consec1, @NotNull Move middle, @NotNull Move consec2) {
+		return consec1.to == middle.to || consec1.to == middle.from || // may not influence the intermediate
+				middle.from == consec2.to || middle.to == consec2.to; // may not influence the result location
 	}
 
 	/**
