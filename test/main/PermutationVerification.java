@@ -17,40 +17,53 @@ public class PermutationVerification {
 
 	@Test
 	public void testSolvedBoards() {
-		Board solved = BoardOf(BucketOff(1,1,1,1));
+		Board solved = BoardOf(BucketOf());
 		assertCanBeSolved(solved);
-		solved = BoardOf(BucketOff(1,1,1,1), BucketOff(2,2,2,2));
+		solved = BoardOf(BucketOf(1,1,1,1));
 		assertCanBeSolved(solved);
-		solved = BoardOf(BucketOff(1,1,1,1), BucketOff(2,2,2,2), BucketOff(3,3,3,3));
+		solved = BoardOf(BucketOf(1,1,1,1), BucketOf(2,2,2,2));
+		assertCanBeSolved(solved);
+		solved = BoardOf(BucketOf(1,1,1,1), BucketOf(2,2,2,2), BucketOf(3,3,3,3));
 		assertCanBeSolved(solved);
 	}
 
 	@Test
 	public void testOneMoveBoards() {
-		Board oneMoveAway = BoardOf(BucketOff(1,1,1), BucketOff(1));
+		Board oneMoveAway = BoardOf(BucketOf(1,1,1), BucketOf(1));
 		assertCanBeSolved(oneMoveAway);
-		oneMoveAway = BoardOf(BucketOff(1,1,1,1), BucketOff(2,2,2), BucketOff(2));
+		oneMoveAway = BoardOf(BucketOf(1,1,1,1), BucketOf(2,2,2), BucketOf(2));
 		assertCanBeSolved(oneMoveAway);
-		oneMoveAway = BoardOf(BucketOff(1,1,1), BucketOff(2,2,2,2), BucketOff(1));
+		oneMoveAway = BoardOf(BucketOf(1,1,1), BucketOf(2,2,2,2), BucketOf(1));
 		assertCanBeSolved(oneMoveAway);
 	}
 
 	@Test
 	public void testTwoMoveBoards() {
-		Board twoMovesAway = BoardOf(BucketOff(1,1), BucketOff(1,1));
+		Board twoMovesAway = BoardOf(BucketOf(1,1), BucketOf(1,1));
 		assertCanBeSolved(twoMovesAway);
-		twoMovesAway = BoardOf(BucketOff(1,1), BucketOff(1), BucketOff(1));
+		twoMovesAway = BoardOf(BucketOf(1,1), BucketOf(1), BucketOf(1));
 		assertCanBeSolved(twoMovesAway);
-		twoMovesAway = BoardOf(BucketOff(2,2,2,2), BucketOff(1,1), BucketOff(1), BucketOff(1));
+		twoMovesAway = BoardOf(BucketOf(2,2,2,2), BucketOf(1,1), BucketOf(1), BucketOf(1));
 		assertCanBeSolved(twoMovesAway);
-		twoMovesAway = BoardOf(BucketOff(1,1), BucketOff(2,2,2,2), BucketOff(1), BucketOff(1));
+		twoMovesAway = BoardOf(BucketOf(1,1), BucketOf(2,2,2,2), BucketOf(1), BucketOf(1));
 		assertCanBeSolved(twoMovesAway);
-		twoMovesAway = BoardOf(BucketOff(1,1), BucketOff(1), BucketOff(2,2,2,2), BucketOff(1));
+		twoMovesAway = BoardOf(BucketOf(1,1), BucketOf(1), BucketOf(2,2,2,2), BucketOf(1));
 		assertCanBeSolved(twoMovesAway);
-		twoMovesAway = BoardOf(BucketOff(1,1), BucketOff(1), BucketOff(1), BucketOff(2,2,2,2));
+		twoMovesAway = BoardOf(BucketOf(1,1), BucketOf(1), BucketOf(1), BucketOf(2,2,2,2));
 		assertCanBeSolved(twoMovesAway);
 	}
 
+	@Test
+	public void testManyMoveBoards() {
+		Board manyAway = BoardOf(BucketOf(1,1,1,2), BucketOf(2,2,2,1));
+		assertCanBeSolved(manyAway);
+		manyAway = BoardOf(
+				BucketOf(2, 1, 1, 1),
+				BucketOf(2, 3, 3, 3),
+				BucketOf(2, 4, 4, 4),
+				BucketOf(2, 1, 3, 4));
+		assertCanBeSolved(manyAway);
+	}
 
 
 	// *********** //
@@ -58,7 +71,17 @@ public class PermutationVerification {
 	// *********** //
 	@Test
 	public void testSimpleUnsolvables() {
-		Board unsolvable = BoardOf(BucketOff(1));
+		Board unsolvable = BoardOf(BucketOf(1));
+		assertCantBeSolved(unsolvable);
+		unsolvable = BoardOf(BucketOf(1,1));
+		assertCantBeSolved(unsolvable);
+		unsolvable = BoardOf(BucketOf(1,1,1));
+		assertCantBeSolved(unsolvable);
+		unsolvable = BoardOf(BucketOf(1,2));
+		assertCantBeSolved(unsolvable);
+		unsolvable = BoardOf(BucketOf(1,2,3));
+		assertCantBeSolved(unsolvable);
+		unsolvable = BoardOf(BucketOf(1,2,3,4));
 		assertCantBeSolved(unsolvable);
 	}
 
@@ -78,7 +101,7 @@ public class PermutationVerification {
 		return result;
 	}
 
-	private static BallBucket BucketOff(Integer... balls) {
+	private static BallBucket BucketOf(Integer... balls) {
 		return new BallBucket(balls);
 	}
 
