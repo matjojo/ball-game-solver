@@ -1,6 +1,5 @@
 package main;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -8,7 +7,7 @@ public class SpeedTest {
 
 	private static final int EVICTING_SIZE = 5;
 
-	public static void main(String[] args) throws IOException {
+	public static void main(String[] args) {
 		System.out.println("Running speedtest version of ballgamesolver.");
 
 		for (int i = 0; i < 10; i++) {
