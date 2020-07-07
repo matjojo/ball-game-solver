@@ -45,6 +45,7 @@ public class Board {
 				}
 				if (buckets[j].full()) continue;
 				option = new Move(i, j);
+				if (!isApprovedTwoMoveList(previousList, option)) continue;
 				if (!isApprovedThreeMoveList(previousList, option)) continue;
 				if (!isApprovedFourMoveList(previousList, option)) continue;
 				if (buckets[j].empty()) {
@@ -59,6 +60,23 @@ public class Board {
 		}
 		return result.toArray(new Move[0]);
 	}
+
+
+	/**
+	 * See <code>isStrictlyHigherThan</code> for more info on how we filter here.
+	 *
+	 * @return true if this is an allowed two move list
+	 */
+	private static boolean isApprovedTwoMoveList(EvictingMoveList previousMoveList, Move current) {
+		if (!moveInfluencesInAnyOrder(previousMoveList.mostRecent(), current) &&
+			isStrictlyHigherThan(previousMoveList.mostRecent(), current)) {
+			return false;
+			// we are not allowed if we are not influencing and higher than, since this can be reordered to
+			// not influencing and lower than.
+		}
+		return true;
+	}
+
 
 	/**
 	 * A list of three shapes can come in several flavours, one set we can filter:
@@ -82,9 +100,8 @@ public class Board {
 	 */
 	private static boolean isApprovedThreeMoveList(EvictingMoveList list, Move current) {
 		// case C N C
-		if (     moveIsConsecutiveTo(list.secondMostRecent(), current) &&
-				!middleInfluencesOuterConsecutives(list.secondMostRecent(), list.mostRecent(), current)) {
-//			System.out.println("Not approved list of three: " + list.secondMostRecent() + " " + list.mostRecent() + " " + current);
+		if (moveIsConsecutiveTo(list.secondMostRecent(), current) &&
+			!middleInfluencesOuterConsecutives(list.secondMostRecent(), list.mostRecent(), current)) {
 			return false;
 		}
 		return true;
@@ -138,13 +155,30 @@ public class Board {
 	}
 
 	/**
-	 * NOTE: this is an unordered check. No fancy stuff here.
+	 * any set of two nonInfluencing moves can be done in two orders.
+	 * Since we can 'sort' these moves by how high both their start and
+	 * endpoints are we can discern their order and filter moves.
+	 *
+	 * Imagine a move (1>5), (0->4) it seems obvious that (1>5) is the higher move.
+	 * And that when called with (1,5),(0,4) this method thus returns true.
+	 *
+	 * Since this method is only valid for nonInfluencing moves we know for sure
+	 * that there can be no moves given to this method that have one element the same.
+	 *
+	 * @return true when the first Move is fully higher than the second one.
+	 */
+	private static boolean isStrictlyHigherThan(@NotNull Move one, @NotNull Move two) {
+		return one.from > two.from && one.to > two.to;
+	}
+
+	/**
+	 * An unordered move influences check, will find more than you want if you know the order.
 	 *
 	 * @param one nonnull move
 	 * @param two nonull move
 	 * @return true if the moves influence each other, so if the moves have any pieces in common
 	 */
-	private static boolean moveInfluences(@NotNull Move one, @NotNull Move two) {
+	private static boolean moveInfluencesInAnyOrder(@NotNull Move one, @NotNull Move two) {
 		return one.from == two.from ||
 				one.from == two.to  ||
 				one.to == two.from  ||
