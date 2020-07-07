@@ -1,11 +1,12 @@
 package main;
 
 public class BallBucket {
+	private static final int NO_BALL = -1;
 
-	private final Integer[] balls;
+	private final int[] balls;
 
 	public BallBucket() {
-		this.balls = new Integer[4];
+		this.balls = new int[]{NO_BALL, NO_BALL, NO_BALL, NO_BALL};
 	}
 
 	public BallBucket(String[] balls) {
@@ -15,25 +16,24 @@ public class BallBucket {
 		}
 	}
 
-	public BallBucket(Integer[] balls) {
+	public BallBucket(int[] balls) {
 		this();
 		System.arraycopy(balls, 0, this.balls, 0, balls.length);
-
 	}
 
 	public boolean full() {
-		return !(balls[3] == null);
+		return !(balls[3] == NO_BALL);
 	}
 
 	public boolean empty() {
-		return balls[0] == null;
+		return balls[0] == NO_BALL;
 	}
 
 	public int top() {
 		if (this.empty()) return -1;
 		// TODO: would caching this make it faster?
 		for (int i = balls.length - 1; i >= 0; i--) {
-			if (balls[i] != null) return balls[i];
+			if (balls[i] != NO_BALL) return balls[i];
 		}
 		throw new IllegalStateException("Not empty but also no ball?");
 	}
@@ -46,7 +46,7 @@ public class BallBucket {
 	 */
 	public void addTop(int newBall) {
 		for (int i = 0; i < balls.length; i++) {
-			if (balls[i] == null) {
+			if (balls[i] == NO_BALL) {
 				balls[i] = newBall;
 				return;
 			}
@@ -62,9 +62,9 @@ public class BallBucket {
 	 */
 	public int removeTop() {
 		for (int i = balls.length - 1; i >= 0; i--) {
-			if (balls[i] != null) {
+			if (balls[i] != NO_BALL) {
 				int ret = balls[i];
-				balls[i] = null;
+				balls[i] = NO_BALL;
 				return ret;
 			}
 		}
@@ -78,7 +78,7 @@ public class BallBucket {
 		if (this.empty()) return true; // TODO: test if this is really faster?
 		for (int i = 1; i < balls.length; i++) {
 			// we know there is a first ball due to not empty, so we can just check the last balls to this one.
-			if (!balls[0].equals(balls[i])) return false;
+			if (!(balls[0] == balls[i])) return false;
 		}
 		return true;
 	}
@@ -91,8 +91,7 @@ public class BallBucket {
 	public boolean hasOnlyThreeSameBalls() {
 		if (this.full()) return false;
 		if (this.empty()) return false;
-		// due to empty we know for sure that balls[0] is nonnull
-		return balls[0].equals(balls[1]) && balls[0].equals(balls[2]);
+		return balls[0] == balls[1] && balls[0] == balls[2];
 	}
 
 }

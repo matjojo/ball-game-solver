@@ -29,7 +29,6 @@ public class PermutationVerification {
 
 	@Test
 	public void testOneMoveBoards() {
-		GameSolver solver = new GameSolver();
 		Board oneMoveAway = BoardOf(BucketOf(1,1,1), BucketOf(1));
 		assertCanBeSolved(1, oneMoveAway);
 		oneMoveAway = BoardOf(BucketOf(1,1,1,1), BucketOf(2,2,2), BucketOf(2));
@@ -115,7 +114,7 @@ public class PermutationVerification {
 		return result;
 	}
 
-	private static BallBucket BucketOf(Integer... balls) {
+	private static BallBucket BucketOf(int... balls) {
 		return new BallBucket(balls);
 	}
 
