@@ -7,7 +7,7 @@ public class GameSolver {
 	private Stack<Move> solution;
 	private int maxMoves;
 	private int amountMoves;
-	private int amountTries;
+	private long amountTries;
 
 	public Stack<Move> getSolution() {
 		return solution;
@@ -17,10 +17,11 @@ public class GameSolver {
 		return amountMoves;
 	}
 
-	public int getAmountTries() {
+	public long getAmountTries() {
 		return amountTries;
 	}
 
+	// TODO: investigate how much of the memory and speed footprint is from this movelist and see if we may be better off using a stack with multiple peeks?
 	public boolean solve(Board board, EvictingMoveList previousList, int maxMoves) {
 		this.solution = new Stack<>(); // reset the values stored
 		this.maxMoves = maxMoves;
